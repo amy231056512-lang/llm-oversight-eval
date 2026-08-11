@@ -209,7 +209,7 @@ def resolve_reasoning_effort(model_name: str) -> Optional[str]:
     return None  # omit the parameter entirely for unsupported families
 
 
-def call_with_retry(model_name: str, prompt: str, max_retries: int = 3) -> tuple:
+def call_with_retry(model_name: str, prompt: str, max_retries: int = 10) -> tuple:
     reasoning_effort = resolve_reasoning_effort(model_name)
     for attempt in range(max_retries):
         kwargs = dict(
