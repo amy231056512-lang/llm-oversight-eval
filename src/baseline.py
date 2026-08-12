@@ -1,7 +1,7 @@
 """
 Runs the RQ1 baseline evaluation: how reliably can each of two independent
 LLMs detect subtle violations of a code specification? Each model judges
-all 30 cases independently (no interaction between them at this stage --
+all 50 cases independently (no interaction between them at this stage --
 that's RQ2). Results are saved per-model so rq2_debate.py can later load
 both and find the cases where they disagreed.
 

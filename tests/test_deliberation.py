@@ -18,7 +18,7 @@ class DeliberationDatasetTest(unittest.TestCase):
         cases = load_dataset()
 
         self.assertGreater(len(cases), 0)
-        self.assertGreaterEqual(len(cases), 30)
+        self.assertGreaterEqual(len(cases), 50)
         self.assertEqual(cases[0]["id"], "dbg_000")
 
     def test_dataset_path_points_to_the_main_dataset_file(self) -> None:
