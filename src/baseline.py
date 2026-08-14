@@ -65,7 +65,7 @@ MODELS = {
 INTER_CALL_DELAY_SECONDS = {
     "openai/gpt-oss-120b": 15,
     "openai/gpt-oss-20b": 5,
-    "qwen/qwen3.6-27b": 15,
+    "qwen/qwen3.6-27b": 30,
 }
 DEFAULT_INTER_CALL_DELAY_SECONDS = 5
 
@@ -79,6 +79,15 @@ Note: some code snippets are fully correct as written; others contain a
 genuine bug. There is no fixed ratio between the two -- do not assume this
 snippet is more likely to be one or the other. Judge strictly on its own
 merits based only on the specification and code shown below.
+
+Judge only whether the code's LOGIC produces correct output for valid
+inputs. If the specification mentions an optimal time or space complexity
+(e.g. "should run in O(log n)"), do NOT flag the code as buggy solely for
+failing to meet that bound -- a slower-but-correct solution is still
+"correct" for this task unless the inefficiency would cause a wrong answer
+(e.g. a timeout on required input sizes). Only flag complexity as a bug if
+the specification explicitly says the input size makes a slower approach
+infeasible.
 
 Use the same standard of caution for both labels:
 - Return "BUG" only when you can point to a specific, concrete violation of
