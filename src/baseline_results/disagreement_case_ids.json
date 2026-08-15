@@ -1,10 +1,30 @@
-[
-  "dbg_009",
-  "dbg_015",
-  "dbg_018",
-  "dbg_022",
-  "dbg_027",
-  "dbg_036",
-  "dbg_039",
-  "dbg_040"
-]
+{
+  "verdict_disagreements": [
+    "dbg_009",
+    "dbg_012",
+    "dbg_015",
+    "dbg_022",
+    "dbg_032",
+    "dbg_036",
+    "dbg_037",
+    "dbg_039",
+    "dbg_040"
+  ],
+  "location_disagreements": [
+    "dbg_003",
+    "dbg_035"
+  ],
+  "all": [
+    "dbg_009",
+    "dbg_012",
+    "dbg_015",
+    "dbg_022",
+    "dbg_032",
+    "dbg_036",
+    "dbg_037",
+    "dbg_039",
+    "dbg_040",
+    "dbg_003",
+    "dbg_035"
+  ]
+}
