@@ -1,5 +1,0 @@
-[
-  "tests/test_deliberation.py::DeliberationDatasetTest::test_call_with_retry_uses_api_retry_after_for_rate_limits",
-  "tests/test_deliberation.py::DeliberationDatasetTest::test_dataset_path_points_to_the_main_dataset_file",
-  "tests/test_deliberation.py::DeliberationDatasetTest::test_load_dataset_reads_the_jsonl_dataset"
-]

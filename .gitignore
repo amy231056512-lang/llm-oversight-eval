@@ -2,14 +2,21 @@
 __pycache__/
 *.py[cod]
 
+# Virtual environment
+.venv/
+venv/
+
+# Pytest
+.pytest_cache/
+
 # Environment variables
 .env
 .env.*
 
-# IDE / editor
+# IDE
 .vscode/
 *.code-workspace
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
