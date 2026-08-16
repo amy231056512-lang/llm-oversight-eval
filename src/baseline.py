@@ -29,8 +29,8 @@ MODELS = {
 }
 
 INTER_CALL_DELAY_SECONDS = {
-    "openai/gpt-oss-120b": 45,
-    "qwen/qwen3.6-27b": 45,
+    "openai/gpt-oss-120b": 60,
+    "qwen/qwen3.6-27b": 60,
 }
 DEFAULT_INTER_CALL_DELAY_SECONDS = 5
 
