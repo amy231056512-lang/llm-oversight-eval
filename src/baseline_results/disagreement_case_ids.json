@@ -1,30 +1,32 @@
 {
   "verdict_disagreements": [
-    "dbg_009",
+    "dbg_003",
     "dbg_012",
     "dbg_015",
-    "dbg_022",
-    "dbg_032",
+    "dbg_016",
+    "dbg_017",
+    "dbg_018",
     "dbg_036",
-    "dbg_037",
-    "dbg_039",
-    "dbg_040"
+    "dbg_037"
   ],
   "location_disagreements": [
-    "dbg_003",
-    "dbg_035"
+    "dbg_020",
+    "dbg_022",
+    "dbg_035",
+    "dbg_041"
   ],
   "all": [
-    "dbg_009",
+    "dbg_003",
     "dbg_012",
     "dbg_015",
-    "dbg_022",
-    "dbg_032",
+    "dbg_016",
+    "dbg_017",
+    "dbg_018",
     "dbg_036",
     "dbg_037",
-    "dbg_039",
-    "dbg_040",
-    "dbg_003",
-    "dbg_035"
+    "dbg_020",
+    "dbg_022",
+    "dbg_035",
+    "dbg_041"
   ]
 }
