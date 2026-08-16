@@ -1,4 +1,4 @@
-# LLM Oversight Evaluation
+# LLM Deliberation for Code Review Evaluation
 
 An independent AI Safety research project investigating the reliability of LLM-based code correctness judgments and the effects of peer-model deliberation.
 
