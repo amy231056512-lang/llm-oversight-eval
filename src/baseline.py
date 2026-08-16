@@ -1,5 +1,5 @@
 """
-Run the baseline evaluation and select disagreement cases.
+RQ1: Run the baseline evaluation and select disagreement cases.
 For Use:
     python src/baseline.py
     python src/debate.py
@@ -29,8 +29,8 @@ MODELS = {
 }
 
 INTER_CALL_DELAY_SECONDS = {
-    "openai/gpt-oss-120b": 35,
-    "qwen/qwen3.6-27b": 35,
+    "openai/gpt-oss-120b": 45,
+    "qwen/qwen3.6-27b": 45,
 }
 DEFAULT_INTER_CALL_DELAY_SECONDS = 5
 

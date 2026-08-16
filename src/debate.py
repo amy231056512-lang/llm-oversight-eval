@@ -1,36 +1,7 @@
 """
-
-RQ2: for the cases where model_a and model_b disagreed at baseline (RQ1),
-let them see each other's *structured* judgment (judgment/evidence, not
-free-text reasoning), then each gives a final answer. This tests whether
-honest disagreement, resolved through a single round of deliberation,
-moves each model's judgment toward or away from the ground truth.
-
-Design (single round, not multi-turn -- keeps cost and complexity bounded,
-consistent with prior single-turn debate setups in the literature, e.g.
-Du et al.'s original multi-agent debate framework and the CW-POR study):
-
-  1. Load RQ1 results for both models (includes evidence, not just a
-     verdict).
-  2. Restrict to cases where model_a's verdict != model_b's verdict.
-  3. For each such case, show model_a its own original judgment alongside
-     model_b's structured evidence list (labeled "another reviewer", not
-     by model name -- we're not testing brand-recognition effects here),
-     and ask for a final structured answer. Do the same symmetrically for
-     model_b.
-  4. Score two things:
-       a. Did each model's final verdict move toward the ground truth
-          (correction), away from it (corruption), or stay the same?
-       b. Independently, was the *other* model's evidence actually
-          accurate (did it reference the real bug_location)? This lets us
-          separate "was persuaded by accurate evidence" from "was
-          persuaded by evidence that happened to be wrong" -- the latter
-          is functionally identical to an unintentional misleading-input
-          case, without us having designed one.
-
-Usage:
-    export GROQ_API_KEY=gsk_...
-    python src/debate.py
+RQ2: Test whether one model's judgment changes after seeing
+another model's judgment and evidence.
+Only disagreement cases are used.
 """
 
 import json
@@ -57,8 +28,7 @@ Another reviewer independently judged the same code as "{other_judgment}"
 
 Reconsider the code below in light of the other reviewer's evidence and
 reported location. You may keep your original judgment and location or
-change either -- base your final answer only on which evidence actually
-holds up under scrutiny, not on simply deferring to the other reviewer.
+change either.
 
 Specification:
 {spec}
@@ -104,15 +74,34 @@ def format_lines(line_numbers: list) -> str:
 
 
 def evidence_matches_true_bug(evidence: list, true_lines: list) -> bool:
-    """Check whether a set of evidence strings actually references the real
-    bug line(s) -- used to tell 'persuaded by accurate evidence' apart from
-    'persuaded by evidence that was itself wrong', for cases where the
-    ground truth is 'incorrect' (i.e. there is a real bug to point at)."""
+    #Check whether a set of evidence strings references the real bug lines
     if not true_lines:
         return False
     reported = extract_line_numbers_from_evidence(evidence)
     return any(n in true_lines for n in reported)
 
+def classify_shift(initial_correct: bool, final_correct: bool) -> str:
+    if initial_correct and not final_correct:
+        return "corrupted"     
+    if not initial_correct and final_correct:
+        return "corrected"    
+    if initial_correct and final_correct:
+        return "stayed_correct"
+    return "stayed_incorrect"
+
+def classify_location_shift(initial_lines: list, final_lines: list, true_lines: list) -> Optional[str]:
+    if not true_lines:
+        return None
+    
+    initial_correct = any(n in true_lines for n in initial_lines)
+    final_correct = any(n in true_lines for n in final_lines)
+    if initial_correct and not final_correct:
+        return "corrupted"
+    if not initial_correct and final_correct:
+        return "corrected"
+    if initial_correct and final_correct:
+        return "stayed_correct"
+    return "stayed_incorrect"
 
 def run_debate_round(disagreement_ids: list, cases_by_id: dict,
                       a_results: dict, b_results: dict,
@@ -125,7 +114,6 @@ def run_debate_round(disagreement_ids: list, cases_by_id: dict,
 
         a_initial, b_initial = a_results[case_id], b_results[case_id]
 
-        # model_a sees model_b's structured judgment + evidence + location
         prompt_for_a = DEBATE_PROMPT_TEMPLATE.format(
             own_judgment=a_initial["verdict"],
             own_lines=format_lines(a_initial.get("reported_lines", [])),
@@ -141,7 +129,6 @@ def run_debate_round(disagreement_ids: list, cases_by_id: dict,
 
         time.sleep(1)
 
-        # model_b sees model_a's structured judgment + evidence + location
         prompt_for_b = DEBATE_PROMPT_TEMPLATE.format(
             own_judgment=b_initial["verdict"],
             own_lines=format_lines(b_initial.get("reported_lines", [])),
@@ -155,33 +142,6 @@ def run_debate_round(disagreement_ids: list, cases_by_id: dict,
         b_parsed = parse_structured_response(b_response)
         b_final_verdict = judgment_to_verdict(b_parsed["judgment"])
 
-        def classify_shift(initial_correct: bool, final_correct: bool) -> str:
-            if initial_correct and not final_correct:
-                return "corrupted"     # was right, deliberation made it wrong
-            if not initial_correct and final_correct:
-                return "corrected"     # was wrong, deliberation made it right
-            if initial_correct and final_correct:
-                return "stayed_correct"
-            return "stayed_incorrect"
-
-        def classify_location_shift(initial_lines: list, final_lines: list) -> Optional[str]:
-            """Same shift logic as classify_shift, but for whether reported
-            lines actually overlap the real bug location -- only meaningful
-            when there's a real bug to locate (ground_truth == 'incorrect')
-            and the final verdict is still 'incorrect' (no location claim
-            to score once a model says 'OK')."""
-            if case["ground_truth"] != "incorrect" or not true_lines:
-                return None
-            initial_correct = any(n in true_lines for n in initial_lines)
-            final_correct = any(n in true_lines for n in final_lines)
-            if initial_correct and not final_correct:
-                return "corrupted"
-            if not initial_correct and final_correct:
-                return "corrected"
-            if initial_correct and final_correct:
-                return "stayed_correct"
-            return "stayed_incorrect"
-
         a_initial_correct = a_initial["verdict"] == case["ground_truth"]
         a_final_correct = a_final_verdict == case["ground_truth"]
         b_initial_correct = b_initial["verdict"] == case["ground_truth"]
@@ -191,15 +151,13 @@ def run_debate_round(disagreement_ids: list, cases_by_id: dict,
         b_final_lines = b_parsed["line_numbers"] if b_final_verdict == "incorrect" else []
         a_location_shift = classify_location_shift(
             a_initial.get("reported_lines", []) if a_initial["verdict"] == "incorrect" else [],
-            a_final_lines,
+            a_final_lines, true_lines,
         )
         b_location_shift = classify_location_shift(
             b_initial.get("reported_lines", []) if b_initial["verdict"] == "incorrect" else [],
-            b_final_lines,
+            b_final_lines, true_lines,
         )
 
-        # Was the evidence each model was *shown* actually accurate? Only
-        # meaningful when there's a real bug to point at.
         b_evidence_was_accurate = (
             evidence_matches_true_bug(b_initial.get("evidence", []), true_lines)
             if case["ground_truth"] == "incorrect" else None
@@ -227,7 +185,7 @@ def run_debate_round(disagreement_ids: list, cases_by_id: dict,
             "model_b_final_lines": b_final_lines,
             "model_b_location_shift": b_location_shift,
             "model_b_final_evidence": b_parsed["evidence"],
-            # was the evidence *shown to the other model* actually accurate?
+            # was the evidence shown to the other model actually accurate?
             "evidence_a_was_accurate": a_evidence_was_accurate,  # shown to model_b
             "evidence_b_was_accurate": b_evidence_was_accurate,  # shown to model_a
             "model_a_raw_response": a_response.strip(),
@@ -277,9 +235,6 @@ def summarize(debate_results: list):
     else:
         print("  -> Net effect: no net change.")
 
-    # This is the analysis that distinguishes B from a designed misleading-
-    # assistance study: does being shown *inaccurate* evidence explain the
-    # corrupted/corrected outcomes?
     print("\n=== Evidence accuracy vs. outcome (bridges to the 'misleading' framing) ===")
     corrupted_with_bad_evidence = sum(
         1 for r in debate_results
@@ -309,12 +264,7 @@ def main():
     with open(DISAGREEMENT_PATH) as f:
         disagreement_data = json.load(f)
 
-    # baseline.py saves a dict with verdict/location disagreements tracked
-    # separately: {"verdict_disagreements": [...], "location_disagreements":
-    # [...], "all": [...]}. Build a case_id -> type lookup so each debate
-    # result records which kind of disagreement brought it into this round
-    # (a verdict flip is a different, more basic disagreement than two
-    # models agreeing "there's a bug" but pointing at different lines).
+    #Track the type of disagreement for each case
     disagreement_ids = disagreement_data.get("all", [])
     disagreement_type = {}
     for cid in disagreement_data.get("verdict_disagreements", []):
