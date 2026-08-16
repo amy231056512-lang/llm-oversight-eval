@@ -20,7 +20,7 @@ The goal is to examine both independent judgment accuracy and whether deliberati
 
 ### Dataset
 
-We constructed a 50-case evaluation set based on [DebugBench](https://huggingface.co/datasets/Rtian/DebugBench) (Tian et al., 2024).
+I constructed a 50-case evaluation set based on [DebugBench](https://huggingface.co/datasets/Rtian/DebugBench) (Tian et al., 2024).
 
 The original cases were filtered and adapted through the following steps:
 
@@ -86,45 +86,24 @@ llm-oversight-eval/
 │
 └── tests/
     └── test_deliberation.py
+
 Main Components
-data/dataset.jsonl — the 50-case evaluation dataset.
-src/baseline.py — runs independent model evaluations for RQ1.
-src/debate.py — runs the deliberation procedure for RQ2.
-src/baseline_results/ — stores independent evaluation results and disagreement cases.
-results/debate_results/ — stores deliberation results.
-tests/ — tests for the deliberation pipeline.
-Running the Experiments
+data/dataset.jsonl: the 50-case evaluation dataset.
+src/baseline.py: runs independent model evaluations for RQ1.
+src/debate.py: runs the deliberation procedure for RQ2.
+src/baseline_results/: stores independent evaluation results and disagreement cases.
+results/debate_results/: stores deliberation results.
 
-Create and activate a Python virtual environment:
-
-python -m venv .venv
-source .venv/bin/activate
-
-Install the required dependencies:
-
-pip install -r requirements.txt
-
-Set the required API credentials in environment variables.
-
-Run the independent evaluation:
-
-python src/baseline.py
-
-Run the deliberation experiment:
-
-python src/debate.py
 Results
-
 The experiments are currently being finalized.
 
 The final report will compare:
-
 independent judgment accuracy across models;
 bug localization accuracy;
 the types of disagreements between models; and
 whether deliberation leads to correction or corruption of judgments.
-Limitations
 
+Limitations
 This initial study has several limitations.
 
 First, the evaluation uses a relatively small set of 50 cases and only a limited number of models. Second, the deliberation experiment currently evaluates a single round of interaction. These design choices limit the extent to which the results can be generalized to other models, datasets, or longer deliberation processes.
