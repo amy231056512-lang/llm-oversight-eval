@@ -66,8 +66,8 @@ During deliberation, a model was exposed to the other model's judgment and suppo
 
 The second judgment was compared with the model's original judgment to examine whether deliberation resulted in:
 
-- **correction** — an initially incorrect judgment became correct; or
-- **corruption** — an initially correct judgment became incorrect.
+- **correction**: an initially incorrect judgment became correct; or
+- **corruption**: an initially correct judgment became incorrect.
 
 ## Repository Structure
 
