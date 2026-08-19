@@ -7,7 +7,7 @@ An independent AI Safety research project investigating the reliability of LLM-b
 
 Large language models are increasingly used to evaluate, review, and oversee the outputs of other AI systems. However, an important question is whether an LLM's judgment remains reliable when assessing another model's output.
 
-This project studies this question in the context of code review. LLMs are asked to evaluate whether a given implementation is correct with respect to a specification. When two models disagree, one model is exposed to the other's judgment and supporting evidence before making a second judgment.
+This project studies this question in the context of code review. LLMs are asked to evaluate whether a given implementation is correct with respect to a specification. When two models disagree, each model is exposed to the other's judgment and supporting evidence before making a second judgment.
 
 The goal is to examine both independent judgment accuracy and whether deliberation helps models correct mistakes or instead causes previously correct judgments to become incorrect.
 
