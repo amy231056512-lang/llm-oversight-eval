@@ -1,7 +1,7 @@
 Status: The experiment and analysis are complete. The research report will soon be added to this repository.
 # LLM Deliberation for Code Review Evaluation
 
-An independent AI Safety research project investigating the reliability of LLM-based code correctness judgments and the effects of peer-model deliberation.
+An independent AI Safety research project investigating how reliable LLM code-review judgments are and how they change after deliberation with another LLM.
 
 ## Overview
 
@@ -10,6 +10,11 @@ Large language models are increasingly used to evaluate, review, and oversee the
 This project studies this question in the context of code review. LLMs are asked to evaluate whether a given implementation is correct with respect to a specification. When two models disagree, each model is exposed to the other's judgment and supporting evidence before making a second judgment.
 
 The goal is to examine both independent judgment accuracy and whether deliberation helps models correct mistakes or instead causes previously correct judgments to become incorrect.
+
+## Motivation
+As a university student, I sometimes use different LLMs to perform the same task and compare their results. When they disagree, I often ask them to explain their reasoning and exchange their arguments until they reach an agreement.
+
+This made me curious about whether this process actually leads to better outcomes. I therefore designed, implemented, and documented an experiment to investigate whether one LLM's reasoning can influence another LLM's code-review judgment.
 
 ## Research Questions
 
